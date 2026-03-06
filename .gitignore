@@ -1,3 +1,8 @@
 .env
 credentials.json
 magister-env
+.flake8
+.vscode/
+__pycache__
+.venv
+test/
