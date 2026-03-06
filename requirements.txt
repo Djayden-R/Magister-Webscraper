@@ -1,4 +1,5 @@
 pathlib
 datetime
 requests
-seleniumwire
+selenium-wire
+blinker==1.7.0
