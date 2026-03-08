@@ -35,7 +35,7 @@ async def fetch_magister_token(playwright: Playwright, name, username, password,
     
     token = headers.get('authorization', None)
     user_id = url.split('/api/leerlingen/')[1].split("/")[0]
-    logging.debug(f"Bearer token found: {token:.20f}")
+    logging.debug(f"Bearer token found: {token[:20]}")
     logging.debug(f"User id found: {user_id}")
 
     await browser.close()
