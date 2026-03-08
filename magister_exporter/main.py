@@ -2,7 +2,7 @@ import json
 import logging
 from fetch_magister import fetch_magister_calendar, fetch_magister_token
 from pathlib import Path
-import datetime
+from datetime import datetime
 from playwright.async_api import async_playwright
 import asyncio
 
