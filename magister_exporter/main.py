@@ -4,6 +4,7 @@ from fetch_magister import fetch_magister_calendar, fetch_magister_token
 from pathlib import Path
 import datetime
 from playwright.async_api import async_playwright
+import asyncio
 
 PROGRAM_PATH = Path("/usr/src/app")
 OPTIONS_FILE_PATH = "/data/options.json"
@@ -81,4 +82,4 @@ async def main():
             logging.info(f"{lesson['LesuurVan']}e hour - {lesson['Omschrijving']} {lesson['Lokatie']}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
