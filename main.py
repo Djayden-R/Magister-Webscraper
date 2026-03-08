@@ -3,6 +3,7 @@ import logging
 from fetch_magister import fetch_magister_calendar, fetch_magister_token
 from pathlib import Path
 import datetime
+from playwright.async_api import async_playwright
 
 PROGRAM_PATH = Path("/usr/src/app")
 OPTIONS_FILE_PATH = "/data/options.json"
@@ -38,7 +39,7 @@ def get_user_info(username):
     return token, user_id
 
 
-def main():
+async def main():
     credentials_list, days_to_fetch = get_options()
 
     if not credentials_list:
@@ -46,6 +47,7 @@ def main():
         return
 
     for credenials in credentials_list:
+        name = credenials.get('name', None)
         username = credenials.get('username', None)
         password = credenials.get('password', None)
 
@@ -59,11 +61,10 @@ def main():
             calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
     
         if not (token and user_id) or not calendar:
-            user_id, token = fetch_magister_token(username, password)
+            async with async_playwright() as playwright:
+                token, user_id = await fetch_magister_token(playwright, name, username, password)
         
         calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
-
-
 
         lessons = calendar['Items']
         prev_day = None

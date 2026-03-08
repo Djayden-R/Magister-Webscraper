@@ -1,5 +1,4 @@
 pathlib
 datetime
 requests
-selenium-wire
-blinker==1.7.0
+playwright
