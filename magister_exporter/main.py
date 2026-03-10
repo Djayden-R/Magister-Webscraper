@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from playwright.async_api import async_playwright
 import asyncio
+from ics_manager import calendar_to_ics, save_ics_file, read_ics_file
 
 PROGRAM_PATH = Path("/usr/src/app")
 OPTIONS_FILE_PATH = "/data/options.json"
@@ -62,6 +63,8 @@ async def main():
 
         token, user_id = get_user_info(username)
 
+        calendar = None
+
         if token and user_id:
             calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
     
@@ -72,19 +75,15 @@ async def main():
         
         calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
 
-        lessons = calendar['Items']
-        prev_day = None
+        if not calendar:
+            print("Unable to fetch magister calendar")
+            continue
 
-        for lesson in lessons:
-            date_str = lesson["Start"]
-            date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-            day = date.strftime("%A (%d/%m)")
+        ics_calendar = calendar_to_ics(calendar)
 
-            if day != prev_day:
-                print(day)
-                prev_day = day
+        calendar_folder = PROGRAM_PATH / "calendars"
 
-            print(f"{lesson['LesuurVan']}e hour - {lesson['Omschrijving']} {lesson['Lokatie']}")
+        save_ics_file(ics_calendar, calendar_folder, "Djayden_Magister.ics")
 
 if __name__ == "__main__":
     asyncio.run(main())
