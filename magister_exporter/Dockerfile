@@ -9,5 +9,6 @@ RUN playwright install --with-deps chromium
 
 COPY fetch_magister.py .
 COPY main.py .
+COPY ics_manager.py .
 
 CMD ["python", "./main.py"]
