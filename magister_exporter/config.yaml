@@ -1,7 +1,6 @@
 name: "Magister Exporter"
-version: "0.0.15"
+version: "0.0.16"
 slug: magister_exporter
-icon: /magister_exporter/icon.jpg
 arch:
   - aarch64
   - amd64
@@ -16,4 +15,5 @@ schema:
       username: str
       password: str
   days_to_fetch: int
-ports: {}
+ports:
+  15060/tcp: 15060
