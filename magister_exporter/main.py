@@ -76,7 +76,6 @@ def save_user_info(username, token, user_id):
             if content != "":
                 print(content)
                 data = json.loads(content)
-                print(f"Data found: {data}")
             else:
                 data = {}
     else:

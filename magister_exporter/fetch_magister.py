@@ -3,7 +3,9 @@ import json
 from datetime import datetime, timedelta
 import logging
 from playwright.async_api import Playwright
+from retrying import retry
 
+@retry(stop_max_attempt_number=3)
 async def fetch_magister_token(playwright: Playwright, name, username, password, headless = True):
     playwright.selectors.set_test_id_attribute("id")
 
