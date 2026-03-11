@@ -74,8 +74,13 @@ def save_user_info(username, token, user_id):
         print(f"Dumping data: {data}")
         json.dump(data, f, indent=2)
 
+
+# Source - https://stackoverflow.com/q/63928479
+# Posted by Elie, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-03-11, License - CC BY-SA 4.0
+
 def start_http_server():
-    server = http.server.ThreadingHTTPServer((socket.gethostbyname(), 15060), HTTPHandler)
+    server = http.server.ThreadingHTTPServer((socket.gethostname(), 15060), HTTPHandler)
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
