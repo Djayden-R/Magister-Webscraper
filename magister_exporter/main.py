@@ -135,7 +135,7 @@ async def main():
         ics_calendar = calendar_to_ics(calendar)
 
         save_ics_file(ics_calendar, CALENDAR_FOLDER, "Djayden_Magister.ics")
+    await asyncio.sleep(50000)
 
 if __name__ == "__main__":
     asyncio.run(main())
-    asyncio.sleep(50000)
