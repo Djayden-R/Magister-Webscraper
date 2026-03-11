@@ -1,5 +1,5 @@
 name: "Magister Exporter"
-version: "0.0.17"
+version: "0.0.18"
 slug: magister_exporter
 arch:
   - aarch64
