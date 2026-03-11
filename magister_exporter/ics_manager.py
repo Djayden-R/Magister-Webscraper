@@ -1,5 +1,4 @@
 from ics import Calendar, Event
-import calendar_example
 import uuid
 from pathlib import Path
 
