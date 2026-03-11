@@ -81,11 +81,15 @@ def save_user_info(username, token, user_id):
 # Retrieved 2026-03-11, License - CC BY-SA 4.0
 
 def start_http_server():
-    server = http.server.ThreadingHTTPServer((socket.gethostname(), 15060), HTTPHandler)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
+    s.close()
+    server = http.server.ThreadingHTTPServer((ip, 15060), HTTPHandler)
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
-    print(f"Started server on http://{socket.gethostname()}:15060")
+    print(f"Started server on http://{ip}:15060")
 
 
 async def main():
