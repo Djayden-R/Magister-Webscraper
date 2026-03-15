@@ -4,13 +4,9 @@ Magister Exporter is a Home Assistant app that automatically fetches your Magist
 
 ## Installation
 
-This app can be installed like every other app:
+[![Add Repository to HA][my-ha-badge]][my-ha-url]
 
-- Go to [apps](https://my.home-assistant.io/hassio/dashboard/) and click on app store
-- Press on the three dot menu⋮and then repositories
-- Fill in the repository URL at the bottom and press "add"
-- Then "Magister Exporter" should appear in the list, click on it and then "Install"
-- Fill in your Magister credentials in the options menu and add a random uuid (get one [here](https://www.uuidgenerator.net/)) and configure the rest of the settings
+Fill in your Magister credentials in the options menu and add a random uuid (get one [here](https://www.uuidgenerator.net/)) and configure the rest of the settings
 
 ## Requirements
 
@@ -32,3 +28,6 @@ The reccomended practice is to use a reverse proxy, like NGINX proxy manager. Th
 You should open up port `443` in your router settings and point it to the reverse proxy manager. And in NGINX you should add a custom URL (from DuckDNS for example) and point it to port `15060`. Below is a beginner-friendly tutorial for setting up NGINX:
 
 - [NGINX tutorial](https://www.youtube.com/watch?v=CSbgLBcIuwE&t=345s)
+
+[my-ha-badge]: https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg
+[my-ha-url]: https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FDjayden-R%2FMagister-Exporter
