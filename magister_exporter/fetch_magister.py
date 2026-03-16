@@ -47,7 +47,8 @@ async def fetch_magister_token(playwright: Playwright, name: str, username: str,
         await browser.close()
         return token, user_id
     except TimeoutError:
-        raise TimeoutError(f"Failed to load calendar: \nCurrent url: {page.url}\nPage content: {page.content()}")
+        content = await page.content()
+        raise TimeoutError(f"Failed to load calendar: \nCurrent url: {page.url}\nPage content: {content}")
 
 def fetch_magister_calendar(user_id: str, bearer_token: str, days_to_fetch: int):
     headers = {
