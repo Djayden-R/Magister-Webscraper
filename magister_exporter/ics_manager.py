@@ -17,7 +17,7 @@ def calendar_to_ics(calendar: dict[str, list]) -> Calendar:
 
         e.begin = event.get("Start", None).replace(" ", "")
         e.end = event.get("Einde", None).replace(" ", "")
-        e.uid = f"magister-{event.get("Id", None)}"
+        e.uid = f"magister-{event.get('Id', None)}"
         e.description = event.get("Inhoud", None)
 
         locations = event.get("Lokalen", None)
