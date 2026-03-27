@@ -1,5 +1,5 @@
 name: "Magister Exporter"
-version: "0.0.35"
+version: "0.0.36"
 slug: magister_exporter
 arch:
   - aarch64
@@ -20,6 +20,7 @@ schema:
       password: password
       uuid: match([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)
   base_url: match([a-zA-Z]+\.magister\.net)
+  logging_mode: list("debug"|"info"|"warning"|"error")
   days_to_fetch: int
   refresh_time: int
 ports:

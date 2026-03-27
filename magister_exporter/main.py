@@ -14,6 +14,8 @@ PROGRAM_PATH = Path("/usr/src/app")
 OPTIONS_FILE_PATH = Path("/data/options.json")
 CALENDAR_FOLDER = PROGRAM_PATH / "calendars"
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 class HTTPHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -70,7 +72,7 @@ def get_user_info(username: str):
 def save_user_info(username: str, token: str, user_id: str):
     token_path = PROGRAM_PATH / "tokens.json"
 
-    print("Saving token to tokens.json")
+    logger.debug("Saving token to tokens.json")
 
     data = {}
 
@@ -90,19 +92,19 @@ def start_http_server():
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
-    print(f"Started server on http://{IP_ADRESS}:15060")
+    logger.debug(f"Started server on http://{IP_ADRESS}:15060")
 
 
 async def main():
     if not CALENDAR_FOLDER.exists():
         CALENDAR_FOLDER.mkdir(parents=True, exist_ok=True)
-        print(f"Created folder: {CALENDAR_FOLDER}")
+        logger.debug(f"Created folder: {CALENDAR_FOLDER}")
     
     start_http_server()
     credentials_list, days_to_fetch, refresh_time, base_url = get_options()
 
     if not credentials_list:
-        print("Credentials not defined, exiting program...")
+        logger.error("Credentials not defined, exiting program...")
         return
 
     while True:
@@ -112,13 +114,13 @@ async def main():
             password = credenials.get('password', None)
             uuid = credenials.get('uuid', None)
 
-            print(f"Checking info for {username}")
+            logger.debug(f"Checking info for {username}")
 
             if not (name and username and password):
-                print(f"Invalid credentials found (name={name}, username={username}, password={password})")
+                logger.error(f"Invalid credentials found (name={name}, username={username}, password={password})")
                 continue
             if not uuid:
-                print(f"You must set a uuid for every credential")
+                logger.error(f"You must set a uuid for every credential")
                 continue
             
             token, user_id = get_user_info(username)
@@ -126,11 +128,11 @@ async def main():
             calendar = None
 
             if token and user_id:
-                print("Token found in tokens.json")
+                logger.debug("Token found in tokens.json")
                 calendar = fetch_magister_calendar(base_url, user_id, token, days_to_fetch)
         
             if not (token and user_id) or not calendar:
-                print("Fetching token...")
+                logger.debug("Fetching token...")
                 async with async_playwright() as playwright:
                     token, user_id = await fetch_magister_token(playwright, base_url, name, username, password)
             
@@ -139,7 +141,7 @@ async def main():
             calendar = fetch_magister_calendar(base_url, user_id, token, days_to_fetch)
 
             if not calendar:
-                print("Unable to fetch magister calendar")
+                logger.error("Unable to fetch magister calendar")
                 continue
 
             ics_calendar = calendar_to_ics(calendar)
@@ -148,7 +150,7 @@ async def main():
 
             save_ics_file(ics_calendar, CALENDAR_FOLDER, file_name)
 
-            print(f"{name}'s calendar is hosted on http://{IP_ADRESS}:15060/{file_name}")
+            logger.info(f"{name}'s calendar is hosted on http://{IP_ADRESS}:15060/{file_name}")
 
         await asyncio.sleep(refresh_time * 60)
 

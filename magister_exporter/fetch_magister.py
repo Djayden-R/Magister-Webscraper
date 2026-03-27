@@ -6,6 +6,8 @@ from playwright.async_api import Playwright, TimeoutError, async_playwright
 from retrying import retry
 import asyncio
 
+logger = logging.getLogger(__name__)
+
 class UnexpectedPageState(Exception):
     pass
 
@@ -19,18 +21,18 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         browser = await chromium.launch(headless=headless)
         page = await browser.new_page()
 
-        print(f"Finding {name}'s token")
+        logger.info(f"Finding {name}'s token")
         await page.goto(f"https://{base_url}/oidc/redirect_callback.html")
         
         await page.get_by_test_id("username").fill(username)
         await page.get_by_test_id("username_submit").click()
-        print("Submitted username")
+        logger.debug("Submitted username")
 
         await page.wait_for_load_state("load")
 
         await page.get_by_test_id('i0118').fill(password)
         await page.get_by_test_id("idSIButton9").click()
-        print("Submitted password")
+        logger.debug("Submitted password")
 
         """
         Now check if id passwordError or id KmsiDescription is visible, 
@@ -38,23 +40,23 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         KmsiDescription means that the password is correct
         """
         await page.wait_for_load_state("load")
-        
+
         signed_in_description = await page.get_by_test_id('KmsiDescription').is_visible(timeout=10)
         password_error = await page.get_by_test_id('passwordError').is_visible(timeout=10)
 
         if password_error:
-            print("Password is incorrect")
+            logger.error("Password is incorrect")
             raise ValueError
         elif not signed_in_description:
-            print("Program didn't continue for an unexpected reason")
+            logger.error("Program didn't continue for an unexpected reason")
             raise UnexpectedPageState
         
         await page.get_by_test_id('idSIButton9').click()
-        print("Continued past Microsoft prompt")
+        logger.debug("Continued past Microsoft prompt")
         
         # Use a glob url pattern
         async with page.expect_response("**/api/leerlingen/**", timeout=0) as response_info:
-            print("Found network leerling request")
+            logger.debug("Found network leerling request")
             response = await response_info.value
             headers = await response.request.all_headers()
             url = response.url
@@ -65,8 +67,8 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         if not token:
             raise ValueError("Unable to find token in requests")
         
-        print(f"Bearer token found: {token[:20]}")
-        print(f"User id found: {user_id}")
+        logger.info(f"Bearer token found: {token[:20]}")
+        logger.info(f"User id found: {user_id}")
 
         await browser.close()
         return token, user_id
