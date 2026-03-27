@@ -1,6 +1,7 @@
 from ics import Calendar, Event
 import uuid
 from pathlib import Path
+import logging
 
 def calendar_to_ics(calendar: dict[str, list]) -> Calendar:
     ics_calendar = Calendar()
@@ -31,7 +32,7 @@ def calendar_to_ics(calendar: dict[str, list]) -> Calendar:
 
 def save_ics_file(ics_calendar: Calendar, base_path: Path, name: str):
     file_path = base_path / name
-    logging.info(f"Saved calendar to {file_path}")
+    print(f"Saved calendar to {file_path}")
 
     with open(file_path, 'w') as ics_file:
         ics_file.writelines(ics_calendar.serialize_iter())

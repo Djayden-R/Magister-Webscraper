@@ -19,18 +19,18 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         browser = await chromium.launch(headless=headless)
         page = await browser.new_page()
 
-        logging.info(f"Finding {name}'s token")
+        print(f"Finding {name}'s token")
         await page.goto(f"https://{base_url}/oidc/redirect_callback.html")
         
         await page.get_by_test_id("username").fill(username)
         await page.get_by_test_id("username_submit").click()
-        logging.info("Submitted username")
+        print("Submitted username")
 
         await page.wait_for_load_state("load")
 
         await page.get_by_test_id('i0118').fill(password)
         await page.get_by_test_id("idSIButton9").click()
-        logging.info("Submitted password")
+        print("Submitted password")
 
         """
         Now check if id passwordError or id KmsiDescription is visible, 
@@ -41,18 +41,18 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         password_error = await page.get_by_test_id('passwordError').is_visible(timeout=10)
 
         if password_error:
-            logging.error("Password is incorrect")
+            print("Password is incorrect")
             raise ValueError
         elif not signed_in_description:
-            logging.error("Program didn't continue for an unexpected reason")
+            print("Program didn't continue for an unexpected reason")
             raise UnexpectedPageState
         
         await page.get_by_test_id('idSIButton9').click()
-        logging.info("Continued past Microsoft prompt")
+        print("Continued past Microsoft prompt")
         
         # Use a glob url pattern
         async with page.expect_response("**/api/leerlingen/**", timeout=0) as response_info:
-            logging.info("Found network leerling request")
+            print("Found network leerling request")
             response = await response_info.value
             headers = await response.request.all_headers()
             url = response.url
@@ -63,8 +63,8 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         if not token:
             raise ValueError("Unable to find token in requests")
         
-        logging.info(f"Bearer token found: {token[:20]}")
-        logging.info(f"User id found: {user_id}")
+        print(f"Bearer token found: {token[:20]}")
+        print(f"User id found: {user_id}")
 
         await browser.close()
         return token, user_id
