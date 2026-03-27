@@ -10,7 +10,7 @@ class UnexpectedPageState(Exception):
     pass
 
 @retry(stop_max_attempt_number=3)
-async def fetch_magister_token(playwright: Playwright, name: str, username: str, password:str, headless: bool = True):
+async def fetch_magister_token(playwright: Playwright, base_url: str, name: str, username: str, password:str, headless: bool = True):
     page = None
     try:
         playwright.selectors.set_test_id_attribute("id")
@@ -20,7 +20,7 @@ async def fetch_magister_token(playwright: Playwright, name: str, username: str,
         page = await browser.new_page()
 
         print(f"Finding {name}'s token")
-        await page.goto("https://middelharnis.magister.net/oidc/redirect_callback.html")
+        await page.goto("https://{base_url}}/oidc/redirect_callback.html")
         
         await page.get_by_test_id("username").fill(username)
         await page.get_by_test_id("username_submit").click()
@@ -73,7 +73,7 @@ async def fetch_magister_token(playwright: Playwright, name: str, username: str,
             content = await page.content()
             raise TimeoutError(f"Failed to load calendar: \nCurrent url: {page.url}\nPage content: {content}")
 
-def fetch_magister_calendar(user_id: str, bearer_token: str, days_to_fetch: int):
+def fetch_magister_calendar(base_url: str, user_id: str, bearer_token: str, days_to_fetch: int):
     headers = {
         "Authorization": bearer_token,
         "content-type": "application/json"
@@ -82,7 +82,7 @@ def fetch_magister_calendar(user_id: str, bearer_token: str, days_to_fetch: int)
     current_date = datetime.now().strftime("%Y-%m-%d")
     end_date = (datetime.now() + timedelta(days=days_to_fetch)).strftime("%Y-%m-%d")
 
-    url = f"https://middelharnis.magister.net/api/personen/{user_id}/afspraken?status=1&tot={end_date}&van={current_date}"
+    url = f"https://{base_url}/api/personen/{user_id}/afspraken?status=1&tot={end_date}&van={current_date}"
 
     r = requests.get(url, headers=headers)
 

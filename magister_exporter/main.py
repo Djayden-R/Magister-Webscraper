@@ -44,8 +44,9 @@ def get_options():
     credentials_list: list[dict[str, str]] = options['credentials']
     days_to_fetch: int = options['days_to_fetch']
     refresh_time: int = options['refresh_time']
+    base_url: str = options['base_url']
 
-    return credentials_list, days_to_fetch, refresh_time
+    return credentials_list, days_to_fetch, refresh_time, base_url
 
 
 def get_user_info(username: str):
@@ -99,7 +100,7 @@ async def main():
         print(f"Created folder: {CALENDAR_FOLDER}")
     
     start_http_server()
-    credentials_list, days_to_fetch, refresh_time = get_options()
+    credentials_list, days_to_fetch, refresh_time, base_url = get_options()
 
     if not credentials_list:
         logging.warning("Credentials not defined, exiting program...")
@@ -117,6 +118,9 @@ async def main():
             if not (name and username and password):
                 logging.error(f"Invalid credentials found (name={name}, username={username}, password={password})")
                 continue
+            if not uuid:
+                logging.error(f"You must set a uuid for every credential")
+                continue
             
             token, user_id = get_user_info(username)
 
@@ -124,16 +128,16 @@ async def main():
 
             if token and user_id:
                 print("Token found in tokens.json")
-                calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
+                calendar = fetch_magister_calendar(base_url, user_id, token, days_to_fetch)
         
             if not (token and user_id) or not calendar:
                 print("Fetching token...")
                 async with async_playwright() as playwright:
-                    token, user_id = await fetch_magister_token(playwright, name, username, password)
+                    token, user_id = await fetch_magister_token(base_url, playwright, name, username, password)
             
             save_user_info(username, token, user_id)
             
-            calendar = fetch_magister_calendar(user_id, token, days_to_fetch)
+            calendar = fetch_magister_calendar(base_url, user_id, token, days_to_fetch)
 
             if not calendar:
                 print("Unable to fetch magister calendar")
