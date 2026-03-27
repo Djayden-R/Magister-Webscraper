@@ -132,7 +132,7 @@ async def main():
             if not (token and user_id) or not calendar:
                 logging.info("Fetching token...")
                 async with async_playwright() as playwright:
-                    token, user_id = await fetch_magister_token(base_url, playwright, name, username, password)
+                    token, user_id = await fetch_magister_token(playwright, base_url, name, username, password)
             
             save_user_info(username, token, user_id)
             

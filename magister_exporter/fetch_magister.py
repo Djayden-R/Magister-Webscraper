@@ -20,7 +20,7 @@ async def fetch_magister_token(playwright: Playwright, base_url: str, name: str,
         page = await browser.new_page()
 
         logging.info(f"Finding {name}'s token")
-        await page.goto("https://{base_url}}/oidc/redirect_callback.html")
+        await page.goto(f"https://{base_url}/oidc/redirect_callback.html")
         
         await page.get_by_test_id("username").fill(username)
         await page.get_by_test_id("username_submit").click()
