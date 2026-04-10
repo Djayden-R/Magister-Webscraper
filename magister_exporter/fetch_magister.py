@@ -39,7 +39,7 @@ def tries(times: int, no_retry_exceptions: tuple[type[BaseException], ...] = ())
         return wrapper
     return func_wrapper
 
-@tries(times=3, no_retry_exceptions=(ValueError, UnexpectedPageState))
+@tries(times=3, no_retry_exceptions=(ValueError,))
 async def fetch_magister_token(playwright: Playwright, base_url: str, name: str, username: str, password:str, headless: bool = True):
     page = None
     try:
